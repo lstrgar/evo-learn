@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evolution and Learning in Differentiable Robots</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* ========== CUSTOMIZATION VARIABLES ========== */
+        :root {
+            /* ELDiR color palette - pastel purple and bright green */
+            --primary-color: #1a202c;
+            --accent-color: #2d3748;
+            --link-color: #A78BFA;
+            --robot-purple: #A78BFA;
+            --robot-dark-green: #16A34A;
+            --robot-medium-green: #22C55E;
+            --robot-light-green: #4ADE80;
+            --accent-green: #22C55E;
+            --text-dark: #000000;
+            --text-medium: #000000;
+            --text-light: #1a1a1a;
+            --bg-white: #ffffff;
+            --bg-warm: #FAFAFA;
+            --border-light: #e5e7eb;
+            --border-medium: #d1d5db;
+            
+            /* Spacing */
+            --content-width: 1000px;
+            --section-spacing: 3rem;
+            
+            /* Typography - matching lukestrgar.com */
+            --font-serif: 'Lora', 'Charter', 'Bitstream Charter', 'Sitka Text', Cambria, serif;
+            --font-sans: 'Helvetica Neue', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        /* ========== BASE STYLES ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-serif);
+            line-height: 1.7;
+            color: var(--text-dark);
+            background: var(--bg-white);
+        }
+        
+        /* ========== HEADER SECTION ========== */
+        header {
+            background: var(--bg-white);
+            padding: 3.5rem 2rem 3rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        .header-content {
+            max-width: var(--content-width);
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            font-family: var(--font-serif);
+            font-size: 2.5rem;
+            font-weight: 400;
+            color: var(--text-dark);
+            margin-bottom: 1.25rem;
+            line-height: 1.25;
+            letter-spacing: -0.01em;
+        }
+        
+        .highlight-teal {
+            color: var(--robot-purple);
+        }
+        
+        .highlight-yellow {
+            color: var(--robot-dark-green);
+        }
+        
+        .highlight-green {
+            color: var(--robot-light-green);
+        }
+        
+        .mobile-only {
+            display: none;
+        }
+        
+        .desktop-br {
+            display: inline;
+        }
+        
+        .desktop-only {
+            display: inline;
+        }
+        
+        .venue {
+            font-family: var(--font-sans);
+            font-size: 1.05rem;
+            color: var(--text-medium);
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+        
+        .venue em {
+            font-style: italic;
+        }
+        
+        .authors {
+            font-family: var(--font-sans);
+            font-size: 1.2rem;
+            color: var(--text-medium);
+            margin-bottom: 0.35rem;
+            font-weight: 400;
+        }
+        
+        .affiliation {
+            font-family: var(--font-sans);
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 1.75rem;
+            font-weight: 400;
+        }
+        
+        .paper-links {
+            margin-top: 1.75rem;
+            display: flex;
+            gap: 0.625rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .btn {
+            font-family: var(--font-sans);
+            padding: 0.5rem 1.125rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-block;
+            font-size: 1.05rem;
+            font-weight: 400;
+            border-radius: 3px;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: 1px solid var(--primary-color);
+        }
+        
+        .btn-primary:active {
+            background: var(--robot-purple);
+            border-color: var(--robot-purple);
+        }
+        
+        @media (hover: hover) {
+            .btn-primary:hover {
+                background: var(--robot-purple);
+                border-color: var(--robot-purple);
+            }
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-medium);
+            border: 1px solid var(--border-medium);
+        }
+        
+        .btn-secondary:active {
+            color: var(--robot-purple);
+            border-color: var(--robot-purple);
+        }
+        
+        @media (hover: hover) {
+            .btn-secondary:hover {
+                color: var(--robot-purple);
+                border-color: var(--robot-purple);
+            }
+        }
+        
+        /* ========== TEASER IMAGE ========== */
+        .teaser-image {
+            max-width: var(--content-width);
+            margin: 1.5rem auto 0;
+            padding: 0 2rem 0;
+        }
+        
+        .teaser-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 2px;
+            background: var(--bg-warm);
+        }
+        
+        .video-tagline {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            font-weight: 400;
+            font-style: italic;
+            color: var(--robot-medium-green);
+            text-align: center;
+            margin-bottom: 1.25rem;
+            letter-spacing: 0.01em;
+        }
+        
+        /* ========== MAIN CONTENT ========== */
+        main {
+            max-width: var(--content-width);
+            margin: 0 auto;
+            padding: 0 2rem 3rem;
+        }
+        
+        section {
+            padding: var(--section-spacing) 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+        
+        section:last-child {
+            border-bottom: none;
+        }
+        
+        h2 {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--text-dark);
+            margin-bottom: 1.125rem;
+            letter-spacing: -0.005em;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--robot-medium-green);
+            display: inline-block;
+        }
+        
+        .section-content {
+            font-family: var(--font-serif);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-medium);
+        }
+        
+        .section-content a {
+            color: var(--link-color);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        @media (hover: hover) {
+            .section-content a:hover {
+                color: var(--robot-medium-green);
+            }
+        }
+        
+        /* ========== ABSTRACT ========== */
+        .abstract-text {
+            text-align: justify;
+            hyphens: auto;
+        }
+        
+        /* ========== VIDEO SECTION ========== */
+        .video-container {
+            margin-top: 1.5rem;
+        }
+        
+        .video-item {
+            margin-bottom: 2.25rem;
+        }
+        
+        .video-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .video-wrapper {
+            background: transparent;
+            border: none;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0;
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .video-wrapper video,
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+        
+        .video-placeholder {
+            color: var(--text-light);
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .video-caption {
+            font-family: var(--font-serif);
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        /* ========== CITATION ========== */
+        .citation-box {
+            background: var(--bg-warm);
+            border: 1px solid var(--border-light);
+            border-radius: 2px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            position: relative;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            color: var(--text-medium);
+            border: 1px solid var(--border-medium);
+            border-radius: 3px;
+            padding: 0.35rem 0.8rem;
+            cursor: pointer;
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 400;
+            transition: all 0.2s ease;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .copy-btn:active {
+            color: var(--robot-purple);
+            border-color: var(--robot-purple);
+        }
+        
+        @media (hover: hover) {
+            .copy-btn:hover {
+                color: var(--robot-purple);
+                border-color: var(--robot-purple);
+            }
+        }
+        
+        .bibtex-code {
+            color: var(--text-dark);
+            white-space: pre;
+            padding-right: 5rem;
+        }
+        
+        /* ========== FOOTER ========== */
+        footer {
+            max-width: var(--content-width);
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        footer a {
+            color: var(--link-color);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+        }
+        
+        @media (hover: hover) {
+            footer a:hover {
+                border-bottom-color: var(--link-color);
+            }
+        }
+        
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 768px) {
+            :root {
+                --section-spacing: 2.5rem;
+            }
+            
+            header {
+                padding: 2.5rem 1.5rem 2.25rem;
+            }
+            
+            h1 {
+                font-size: 1.875rem;
+                line-height: 1.3;
+                margin-bottom: 1rem;
+            }
+            
+            .mobile-only {
+                display: inline;
+            }
+            
+            .desktop-br {
+                display: none;
+            }
+            
+            .desktop-only {
+                display: none;
+            }
+            
+            .venue {
+                font-size: 0.95rem;
+                margin-bottom: 1.25rem;
+            }
+            
+            .authors,
+            .affiliation {
+                font-size: 1rem;
+            }
+            
+            .paper-links {
+                gap: 0.5rem;
+            }
+            
+            .btn {
+                font-size: 0.975rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            main {
+                padding: 0 1.5rem 2.5rem;
+            }
+            
+            section {
+                padding: var(--section-spacing) 0;
+            }
+            
+            h2 {
+                font-size: 1.35rem;
+                margin-bottom: 1rem;
+            }
+            
+            .section-content {
+                font-size: 1rem;
+            }
+            
+            .abstract-text {
+                text-align: left;
+            }
+            
+            .video-caption {
+                font-size: 0.9rem;
+            }
+            
+            .video-tagline {
+                font-size: 1.5rem;
+            }
+            
+            .citation-box {
+                padding: 1.25rem;
+                font-size: 0.75rem;
+            }
+            
+            .copy-btn {
+                position: static;
+                display: block;
+                margin-bottom: 1rem;
+                width: 100%;
+            }
+            
+            .bibtex-code {
+                padding-right: 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.625rem;
+            }
+            
+            .venue {
+                font-size: 0.9rem;
+            }
+            
+            .authors,
+            .affiliation {
+                font-size: 0.95rem;
+            }
+            
+            header {
+                padding: 2rem 1.25rem 2rem;
+            }
+            
+            main {
+                padding: 0 1.25rem 2rem;
+            }
+            
+            h2 {
+                font-size: 1.25rem;
+            }
+            
+            .section-content {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <h1><span class="desktop-only"><span class="highlight-yellow">Evolution</span> and <span class="highlight-green">Learning</span> in <br><span class="highlight-teal">Differentiable</span> Robots</span><span class="mobile-only"><span class="highlight-yellow">Evolution</span> and<br><span class="highlight-green">Learning</span> in<br><span class="highlight-teal">Differentiable</span> Robots</span></h1>
+            <p class="venue"><em>Robotics: Science and Systems (RSS)</em>, 2024</p>
+            <p class="authors">Luke Strgar, David Matthews, Tyler Hummer, Sam Kriegman</p>
+            <p class="affiliation">Northwestern University</p>
+            <div class="paper-links">
+                <a href="https://www.roboticsproceedings.org/rss20/p100.html" class="btn btn-secondary" target="_blank">Paper</a>
+                <a href="https://github.com/lstrgar/ELDiR" class="btn btn-secondary" target="_blank">Code</a>
+                <a href="#citation" class="btn btn-secondary">Citation</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Teaser Video -->
+    <div class="teaser-image">
+        <p class="video-tagline">Virtual creatures at scale</p>
+        <div class="video-wrapper">
+            <iframe src="https://www.youtube.com/embed/OdgrNYzSZ64?autoplay=1&mute=1&loop=1&playlist=OdgrNYzSZ64&rel=0&modestbranding=1" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Abstract -->
+        <section id="abstract">
+            <h2>Abstract</h2>
+            <div class="section-content abstract-text">
+                The automatic design of robots has existed for 30 years but has been constricted by serial non-differentiable design evaluations, premature convergence to simple bodies or clumsy behaviors, and a lack of sim2real transfer to physical machines. Thus, here we employ massively-parallel differentiable simulations to rapidly and simultaneously optimize individual neural control of behavior across a large population of candidate body plans and return a fitness score for each design based on the performance of its fully optimized behavior. Non-differentiable changes to the mechanical structure of each robot in the population — mutations that rearrange, combine, add, or remove body parts — were applied by a genetic algorithm in an outer loop of search, generating a continuous flow of novel morphologies with highly-coordinated and graceful behaviors honed by gradient descent. This enabled the exploration of several orders-of-magnitude more designs than all previous methods, despite the fact that robots here have the potential to be much more complex, in terms of number of independent motors, than those in prior studies. We found that evolution reliably produces "increasingly differentiable" robots: body plans that smooth the loss landscape in which learning operates and thereby provide better training paths toward performant behaviors. Finally, one of the highly differentiable morphologies discovered in simulation was realized as a physical robot and shown to retain its optimized behavior. This provides a cyberphysical platform to investigate the relationship between evolution and learning in biological systems and broadens our understanding of how a robot's physical structure can influence the ability to train policies for it.
+            </div>
+            <div style="margin-top: 2rem;">
+                <img src="assets/zoo.jpg" alt="Robot Zoo" style="width: 100%; height: auto; display: block; border-radius: 2px;">
+            </div>
+        </section>
+
+        <!-- Citation -->
+        <section id="citation">
+            <h2>Citation</h2>
+            <div class="section-content">
+                <div class="citation-box">
+                    <button class="copy-btn" onclick="copyBibtex()">Copy</button>
+                    <pre class="bibtex-code" id="bibtex">@inproceedings{
+  strgar2024evolutionandlearning,
+  title={Evolution and learning in differentiable robots},
+  author={Strgar, Luke and Matthews, David and Hummer, Tyler and Kriegman, Sam},
+  booktitle={Robotics: Science and Systems},
+  year={2024},
+  url={https://www.roboticsproceedings.org/rss20/p100.html}
+}</pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function copyBibtex() {
+            const bibtexText = document.getElementById('bibtex').textContent;
+            navigator.clipboard.writeText(bibtexText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+
+        // Remove sticky highlights on mobile after tapping buttons
+        document.querySelectorAll('.btn, .copy-btn').forEach(button => {
+            button.addEventListener('touchend', function(e) {
+                this.blur();
+            });
+            button.addEventListener('click', function(e) {
+                this.blur();
+            });
+            button.addEventListener('mousedown', function(e) {
+                e.preventDefault();
+            });
+        });
+
+        // Smooth scroll for citation link
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
